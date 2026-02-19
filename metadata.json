@@ -1,0 +1,7 @@
+{
+  "name": "Rio de Janeiro por Vida Carioca",
+  "description": "Seu guia definitivo para viver o Rio de Janeiro como um verdadeiro carioca. Restaurantes, bares e passeios imperdíveis.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
