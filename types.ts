@@ -22,4 +22,4 @@ export interface ChatMessage {
   text: string;
 }
 
-export type Language = 'pt' | 'en' | 'es';
+// export type Language = 'pt' | 'en' | 'es'; // Removido

@@ -1,0 +1,15 @@
+# Histórico do Projeto - Vida Carioca
+
+## [2026-02-19] - Início da Análise e Configuração Local
+- Verificação da estrutura de arquivos do projeto.
+- Identificado projeto React + Vite + TypeScript.
+- Objetivo: Prover detalhamento completo e configurar servidor local para acompanhamento em tempo real.
+- Status: Servidor Local iniciado em http://localhost:3000.
+- Detalhamento de arquivos realizado (App.tsx, components, geminiService, etc).
+- Correção de Erro: Tela em branco resolvida adicionando o script de entrada (`index.tsx`) ao `index.html` e removendo `importmaps` conflitantes.
+- Remoção de IA: O componente `ChatAssistant`, o serviço `geminiService` e a lógica de tradução automática foram removidos conforme solicitado. A dependência `@google/genai` foi desinstalada.
+- Remoção de Traduções: Todo o sistema de idiomas (seletor de bandeiras, estados de tradução e cache) foi removido. O projeto agora está fixado em Português (Brasil).
+- Tipografia: Removidas as transformações de texto para maiúsculas (uppercase) em toda a interface e ajustada a exibição da data para letras minúsculas.
+- Limpeza Visual: Removidos os textos secundários "Rio de Janeiro por" e "Rio de Janeiro" dos cabeçalhos da Sidebar e Desktop para um visual mais minimalista.
+- Minimalismo Extremo: Remoção completa da seção Hero (imagem de fundo, título e barra de busca central), cabeçalhos móveis e desktop, e todo o branding da Sidebar (logo "RJ" e nome do app). A interface agora foca exclusivamente na funcionalidade de filtros e grade de conteúdos.
+- Refatoração: Arquivo `Header.tsx` restaurado e integrado ao `App.tsx` para exibir "Rio de Janeiro por Vida Carioca", data e clima, atendendo ao pedido do usuário de manter a barra de informações no topo.

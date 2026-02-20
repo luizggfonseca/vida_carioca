@@ -2,23 +2,26 @@
 import { GoogleGenAI } from "@google/genai";
 import { Spot, CategoryConfig } from "./types";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || '' });
+// Para o Vite, usamos import.meta.env. Se não houver, voltamos para string vazia.
+const apiKey = (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
+// Inicializamos como null se a chave for vazia para evitar erro fatal no navegador
+const ai = apiKey ? new GoogleGenAI(apiKey) : null;
 
 export const getCariocaAdvice = async (prompt: string) => {
+  if (!ai) return "Ih, o Carioca AI tá sem a chave do motor! Configure a API_KEY pra eu poder falar, valeu?";
   try {
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: prompt,
-      config: {
-        systemInstruction: `Você é o "Carioca AI", um guia local especialista e apaixonado pelo Rio de Janeiro. 
+    const model = ai.getGenerativeModel({
+      model: 'gemini-1.5-flash', // Usando um modelo estável e disponível
+      systemInstruction: `Você é o "Carioca AI", um guia local especialista e apaixonado pelo Rio de Janeiro. 
         Seu tom é amigável, usa algumas gírias cariocas leves (como "mermão", "valeu", "show", "fechou"), mas é sempre útil e preciso. 
         Dê dicas de restaurantes, bares, praias e eventos culturais. 
         Se o usuário perguntar por algo fora do Rio, gentilmente lembre-o que você é especialista na Cidade Maravilhosa.
         Sempre formate a resposta em Markdown para facilitar a leitura.`,
-        temperature: 0.7,
-      },
     });
-    return response.text;
+
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    return response.text();
   } catch (error) {
     console.error("Erro ao consultar Gemini:", error);
     return "Ih, deu um ruim aqui no sistema! Tenta de novo em um minutinho, valeu?";
@@ -26,10 +29,12 @@ export const getCariocaAdvice = async (prompt: string) => {
 };
 
 export const translateContent = async (
-  spots: Spot[], 
-  categories: CategoryConfig[], 
+  spots: Spot[],
+  categories: CategoryConfig[],
   targetLang: 'en' | 'es'
 ): Promise<{ spots: Spot[], categories: CategoryConfig[] }> => {
+  if (!ai) return { spots, categories };
+
   try {
     const prompt = `
       You are a professional translator. Translate the following JSON data from Portuguese to ${targetLang === 'en' ? 'English' : 'Spanish'}.
@@ -47,15 +52,16 @@ export const translateContent = async (
       ${JSON.stringify({ spots, categories })}
     `;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
-      contents: prompt,
-      config: {
+    const model = ai.getGenerativeModel({
+      model: 'gemini-1.5-flash',
+      generationConfig: {
         responseMimeType: "application/json"
       }
     });
 
-    const text = response.text || "{}";
+    const result = await model.generateContent(prompt);
+    const response = await result.response;
+    const text = response.text() || "{}";
     // Remove markdown code blocks if present just in case
     const cleanJson = text.replace(/```json|```/g, '').trim();
     return JSON.parse(cleanJson);
